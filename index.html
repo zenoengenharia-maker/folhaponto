@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <meta name="theme-color" content="#060642"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="ZENO RH"/>
+  <title>ZENO RH — Ponto & Folha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#060642;--navy2:#1C245C;--navy3:#1F2B75;
+  --gold:#D4A249;--gold2:#e8b85a;
+  --red:#ef4444;--green:#22c55e;--blue:#3b82f6;--amber:#f59e0b;
+  --bg:#f0f2f8;--card:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;
+  --font:'Poppins',sans-serif;--radius:12px;--shadow:0 2px 16px rgba(6,6,66,.09);
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+input,select,button,textarea{font-family:var(--font)}
+button{cursor:pointer}
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+/* LOGIN */
+.login-bg{position:fixed;inset:0;background:linear-gradient(135deg,#060642 0%,#1C245C 60%,#0A1E3A 100%);z-index:0}
+.hex-grid{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52'%3E%3Cpath d='M30 0L60 15L60 37L30 52L0 37L0 15Z' fill='none' stroke='rgba(212,162,73,0.07)' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 52px}
+.login-card{position:relative;z-index:1;max-width:380px;margin:0 auto;padding:48px 28px;display:flex;flex-direction:column;gap:20px;min-height:100vh;justify-content:center}
+.logo-block{display:flex;align-items:center;gap:14px}
+.logo-shield{width:52px;height:52px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--navy);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);flex-shrink:0}
+.logo-shield.sm{width:34px;height:34px;font-size:15px;border-radius:8px}
+.logo-name{font-size:28px;font-weight:900;color:#fff;letter-spacing:4px;line-height:1}
+.logo-name.sm{font-size:17px;letter-spacing:3px}
+.logo-sub{font-size:9px;font-weight:600;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
+.logo-sub.sm{font-size:7px;letter-spacing:2px}
+.login-title{font-size:22px;font-weight:700;color:#fff}
+.login-desc{font-size:12px;color:rgba(255,255,255,.45);margin-top:-12px}
+.field-group{display:flex;flex-direction:column;gap:6px}
+.field-group label{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.5px;text-transform:uppercase}
+.field-group input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:13px 16px;color:#fff;font-size:14px;outline:none;transition:border-color .2s}
+.field-group input::placeholder{color:rgba(255,255,255,.25)}
+.field-group input:focus{border-color:var(--gold)}
+.error-msg{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;color:#fca5a5;font-size:12px}
+/* BUTTONS */
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:10px;padding:14px 20px;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;letter-spacing:.5px;width:100%}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,162,73,.4)}
+.btn-sm{border:none;border-radius:7px;padding:7px 13px;font-size:11px;font-weight:700;letter-spacing:.3px;transition:all .15s;white-space:nowrap}
+.btn-sm.gold{background:var(--gold);color:var(--navy)}.btn-sm.green{background:var(--green);color:#fff}
+.btn-sm.red{background:var(--red);color:#fff}.btn-sm.gray{background:#94a3b8;color:#fff}
+.btn-sm.navy{background:var(--navy2);color:#fff}.btn-sm:hover{opacity:.85;transform:translateY(-1px)}
+.btn-icon{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;transition:all .2s;flex-shrink:0}
+.btn-icon:hover{background:rgba(255,255,255,.16)}
+/* HEADER */
+.app-header{background:var(--navy);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.header-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.header-period{display:flex;gap:6px;flex:1;justify-content:center}
+.header-period select{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 8px;color:#fff;font-size:11px;font-family:var(--font);outline:none}
+/* SUMMARY */
+.summary-bar{background:var(--navy2);padding:10px 14px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;border-bottom:1px solid rgba(255,255,255,.05)}
+.summary-item{text-align:center;padding:4px}.summary-item.highlight{background:rgba(212,162,73,.1);border-radius:8px}
+.s-label{display:block;font-size:8px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+.s-value{display:block;font-size:13px;font-weight:700;color:#fff;margin-top:2px}
+.s-value.gold{color:var(--gold)}.s-value.red{color:#f87171}
+/* TABS */
+.tab-nav{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:11px 14px;font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .2s;flex-shrink:0}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--gold)}
+/* FILTER BAR */
+.filter-bar{background:#fff;padding:8px 14px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.filter-bar select{border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;font-family:var(--font);color:var(--text);outline:none;background:#f8fafc;flex:1;min-width:130px}
+.filter-actions{display:flex;gap:6px}
+.app-main{padding:14px;padding-bottom:40px}
+/* PONTO */
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--muted)}
+.legend-dot{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800}
+.ponto-wrapper{overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow);background:#fff}
+.ponto-table{border-collapse:collapse;width:100%;min-width:600px}
+.ponto-table th{background:var(--navy);color:var(--gold);padding:7px 5px;font-size:9px;font-weight:700;text-align:left;white-space:nowrap}
+.ponto-table th.s-col{position:sticky;left:0;z-index:10;background:var(--navy)}
+.ponto-table td{padding:5px;border-bottom:1px solid var(--border);font-size:10px;vertical-align:middle}
+.ponto-table td.s-col{position:sticky;left:0;background:#fff;z-index:5;font-weight:600;font-size:10px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.ponto-table tr:nth-child(even) td{background:#f8fafc}.ponto-table tr:nth-child(even) td.s-col{background:#f8fafc}
+.ponto-table tr:hover td{background:#eef2ff}.ponto-table tr:hover td.s-col{background:#eef2ff}
+.cell-btn{width:24px;height:24px;border:none;border-radius:5px;font-size:9px;font-weight:800;display:block;margin:0 auto;line-height:24px;text-align:center;transition:transform .1s}
+.cell-btn:active{transform:scale(.85)}
+.st-P{background:#dcfce7;color:#15803d}.st-F{background:#fee2e2;color:#dc2626}
+.st-M{background:#fef9c3;color:#a16207}.st-O{background:#dbeafe;color:#1d4ed8}
+.obra-tag{display:inline-block;background:var(--navy2);color:var(--gold);font-size:7px;padding:1px 5px;border-radius:3px;font-weight:700}
+.func-tag{display:inline-block;background:#f0f2f8;color:var(--muted);font-size:7px;padding:1px 5px;border-radius:3px;font-weight:600;margin-top:2px}
+/* FOLHA */
+.obra-section{margin-bottom:18px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.obra-header{background:var(--navy2);color:var(--gold);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:12px}
+.folha-scroll{overflow-x:auto}
+.folha-table{width:100%;border-collapse:collapse;background:#fff;min-width:560px}
+.folha-table th{background:#f0f2f8;color:var(--navy2);padding:7px 10px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.folha-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:11px}
+.folha-table tr:hover td{background:#f8fafc}
+.vr{color:var(--red)}.va{color:var(--amber)}.vg{color:var(--green);font-weight:700}.vgold{color:var(--gold);font-weight:800;font-size:12px}
+.total-card{background:var(--navy);border-radius:var(--radius);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:6px;box-shadow:var(--shadow)}
+.total-label{color:rgba(255,255,255,.55);font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.total-value{color:var(--gold);font-size:22px;font-weight:900}
+/* PAGAMENTOS */
+.pag-item{background:#fff;padding:12px 14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.pag-item:hover{background:#f8fafc}
+.pag-nome{font-size:12px;font-weight:700;color:var(--text)}
+.pag-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.pag-cols{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;align-items:center}
+.pag-col{display:flex;flex-direction:column;gap:4px}
+.pag-col-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.pag-input{border:1px solid var(--border);border-radius:7px;padding:7px 8px;font-size:12px;font-family:var(--font);outline:none;background:#f8fafc;width:100%;transition:border-color .2s}
+.pag-input:focus{border-color:var(--gold);background:#fff}
+.pag-select{border:1px solid var(--border);border-radius:7px;padding:7px 6px;font-size:11px;font-family:var(--font);outline:none;font-weight:700;width:100%}
+.pag-saldo{font-size:13px;font-weight:800;padding:4px 0}
+.saldo-ok{color:var(--green)}.saldo-pend{color:var(--red)}
+.pag-badge{display:inline-block;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700}
+.pag-pend{background:#fee2e2;color:#dc2626}.pag-parc{background:#fef9c3;color:#a16207}.pag-pago{background:#dcfce7;color:#16a34a}
+.pag-select.pag-pend{background:#fee2e2;color:#dc2626;border-color:#fca5a5}
+.pag-select.pag-parc{background:#fef9c3;color:#a16207;border-color:#fde68a}
+.pag-select.pag-pago{background:#dcfce7;color:#16a34a;border-color:#86efac}
+/* MINI CARDS */
+.mini-card{background:#fff;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.mini-card.navy{background:var(--navy)}
+.mc-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.mc-val{font-size:18px;font-weight:900;margin-top:4px;color:var(--text)}
+.mc-val.gold{color:var(--gold)}.mc-val.amber{color:var(--amber)}.mc-val.red{color:var(--red)}
+/* EQUIPE */
+.equipe-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.equipe-top h2{font-size:15px;font-weight:700;color:var(--navy)}
+.func-group{margin-bottom:18px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.func-group-header{background:var(--navy2);color:var(--gold);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:1px}
+.func-item{background:#fff;padding:11px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);transition:background .15s}
+.func-item:last-child{border-bottom:none}.func-item:hover{background:#f8fafc}
+.func-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--navy2),var(--navy3));border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:15px;flex-shrink:0}
+.func-info{flex:1;min-width:0}
+.func-name{font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.func-meta{font-size:9px;color:var(--muted);margin-top:2px}
+.func-salary{text-align:right;flex-shrink:0}
+.func-salary .gross{font-size:12px;font-weight:700;color:var(--navy)}
+.func-salary .daily{font-size:9px;color:var(--muted)}
+.func-actions{display:flex;gap:5px;flex-shrink:0}
+/* CONFIG */
+.config-section{background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.config-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px}
+.config-row:last-child{border-bottom:none}
+.config-row label{font-size:12px;font-weight:600;color:var(--text)}
+.config-row span{font-size:11px;color:var(--muted)}
+.obra-list{display:flex;flex-direction:column;gap:8px}
+.obra-item{display:flex;align-items:center;gap:8px;background:#f8fafc;border-radius:8px;padding:8px 12px}
+.obra-item span{flex:1;font-size:12px;font-weight:600;color:var(--navy2)}
+.add-obra-row{display:flex;gap:8px;margin-top:10px}
+.add-obra-row input{flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;outline:none}
+.add-obra-row input:focus{border-color:var(--gold)}
+.senha-form{display:flex;flex-direction:column;gap:10px}
+.senha-form input{border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;outline:none}
+.senha-form input:focus{border-color:var(--gold)}
+/* FORMS */
+.form-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-field label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.form-field input,.form-field select{border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--font);outline:none;background:#f8fafc;transition:border-color .2s;width:100%}
+.form-field input:focus,.form-field select:focus{border-color:var(--gold);background:#fff}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:200;padding:0;backdrop-filter:blur(4px)}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;overflow:hidden;box-shadow:0 -8px 40px rgba(0,0,0,.2);max-height:90vh;display:flex;flex-direction:column}
+.modal-header{background:var(--navy);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-header h3{color:#fff;font-size:14px;font-weight:700}
+.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:6px;font-size:14px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:18px;overflow-y:auto;flex:1}
+.modal-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--navy);color:var(--gold);padding:9px 22px;border-radius:30px;font-weight:700;font-size:11px;opacity:0;transition:all .3s;pointer-events:none;z-index:500;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:420px){
+  .summary-bar{grid-template-columns:repeat(2,1fr)}
+  .total-value{font-size:18px}.form-row{grid-template-columns:1fr}
+  .pag-cols{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen active">
+  <div class="login-bg"><div class="hex-grid"></div></div>
+  <div class="login-card">
+    <div class="logo-block">
+      <div class="logo-shield">Z</div>
+      <div><div class="logo-name">ZENO</div><div class="logo-sub">ENGENHARIA</div></div>
+    </div>
+    <h2 class="login-title">Sistema RH</h2>
+    <p class="login-desc">Ponto · Folha · Pagamentos · Equipe</p>
+    <div id="loginError" class="error-msg" style="display:none"></div>
+    <div class="field-group">
+      <label>E-mail</label>
+      <input id="inputEmail" type="email" placeholder="zenoengenharia@gmail.com" autocomplete="username"/>
+    </div>
+    <div class="field-group">
+      <label>Senha</label>
+      <input id="inputSenha" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-primary" onclick="fazerLogin()">
+      Entrar
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appScreen" class="screen">
+  <header class="app-header">
+    <div class="header-logo">
+      <div class="logo-shield sm">Z</div>
+      <div><div class="logo-name sm">ZENO</div><div class="logo-sub sm">RH</div></div>
+    </div>
+    <div class="header-period">
+      <select id="selMes" onchange="mudarPeriodo()"></select>
+      <select id="selAno" onchange="mudarPeriodo()"></select>
+    </div>
+    <button class="btn-icon" onclick="fazerLogout()" title="Sair">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+    </button>
+  </header>
+  <div class="summary-bar">
+    <div class="summary-item"><span class="s-label">Funcionários</span><span class="s-value" id="sumFunc">—</span></div>
+    <div class="summary-item"><span class="s-label">Faltas</span><span class="s-value red" id="sumFaltas">—</span></div>
+    <div class="summary-item"><span class="s-label">Dias Úteis</span><span class="s-value" id="sumDias">—</span></div>
+    <div class="summary-item highlight"><span class="s-label">Total a Pagar</span><span class="s-value gold" id="sumTotal">—</span></div>
+  </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="mudarAba('ponto',this)">⏱ Ponto</button>
+    <button class="tab-btn" onclick="mudarAba('folha',this)">💰 Folha</button>
+    <button class="tab-btn" onclick="mudarAba('pagamentos',this)">💳 Pagamentos</button>
+    <button class="tab-btn" onclick="mudarAba('equipe',this)">👷 Equipe</button>
+    <button class="tab-btn" onclick="mudarAba('config',this)">⚙️ Config</button>
+  </nav>
+  <div class="filter-bar">
+    <select id="selObra" onchange="filtrarObra()"><option value="Todas">Todas as obras</option></select>
+    <div class="filter-actions">
+      <button class="btn-sm gold" onclick="exportarPDF()">📄 PDF</button>
+      <button class="btn-sm green" onclick="exportarCSV()">📊 Excel</button>
+    </div>
+  </div>
+  <main class="app-main" id="appMain"></main>
+</div>
+
+<!-- MODAL FUNCIONÁRIO -->
+<div id="modalFunc" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modalFuncTitle">Funcionário</h3>
+      <button class="modal-close" onclick="fecharModalFunc()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editFuncId"/>
+      <div class="form-field"><label>Nome Completo</label><input id="editNome" type="text" placeholder="NOME COMPLETO"/></div>
+      <div class="form-row">
+        <div class="form-field"><label>Função</label>
+          <select id="editFuncao"><option>Pedreiro</option><option>Servente</option><option>Encarregado</option><option>Mestre de Obras</option><option>Ajudante</option></select>
+        </div>
+        <div class="form-field"><label>Obra</label><select id="editObra"></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Diária (R$)</label><input id="editDiaria" type="number" step="0.01" placeholder="89.45"/></div>
+        <div class="form-field"><label>Salário Bruto (R$)</label><input id="editSalario" type="number" step="0.01" placeholder="1789.00"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm gray" onclick="fecharModalFunc()">Cancelar</button>
+      <button class="btn-sm gold" onclick="salvarFuncionario()">✓ Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR -->
+<div id="modalConfirm" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header"><h3>Confirmar</h3><button class="modal-close" onclick="fecharConfirm()">✕</button></div>
+    <div class="modal-body"><p id="confirmMsg" style="font-size:13px;color:#64748b;line-height:1.6"></p></div>
+    <div class="modal-footer">
+      <button class="btn-sm gray" onclick="fecharConfirm()">Cancelar</button>
+      <button class="btn-sm red" onclick="confirmarAcao()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+'use strict';
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const ST_CICLO=['P','F','M','O'],ST_LBL={P:'P',F:'F',M:'½',O:'★'},ST_CLS={P:'st-P',F:'st-F',M:'st-M',O:'st-O'};
+const PAG_STATUS=['Pendente','Parcial','Pago'],PAG_CLS={Pendente:'pag-pend',Parcial:'pag-parc',Pago:'pag-pago'},PAG_ICO={Pendente:'🔴',Parcial:'🟡',Pago:'🟢'};
+const OBRAS_P=['Montparnasse','Mikonos','La Touche','Bela Vista','Ponta da Areia'];
+const FUNCS_P=[
+  {id:1,nome:'CARLOS CESAR ROQUE DE LIMA',funcao:'Encarregado',obra:'Montparnasse',diaria:105.73,salario:2114.60},
+  {id:2,nome:'JOSÉ REINALDO CORREIA',funcao:'Pedreiro',obra:'Montparnasse',diaria:107.23,salario:2144.60},
+  {id:3,nome:'MATHEUS SIDNEY COSTA AZEVEDO',funcao:'Servente',obra:'Montparnasse',diaria:89.45,salario:1789.00},
+  {id:4,nome:'JARDIELSON PEREIRA SANTOS',funcao:'Pedreiro',obra:'Mikonos',diaria:89.45,salario:1789.00},
+  {id:5,nome:'DHEIDSON ROBERTO DOS SANTOS',funcao:'Encarregado',obra:'Mikonos',diaria:134.25,salario:2685.00},
+  {id:6,nome:'ALAN QUINDERE SANTOS',funcao:'Servente',obra:'Mikonos',diaria:89.45,salario:1789.00},
+  {id:7,nome:'GEOVANE ALEXANDRE RODRIGUES RIBEIRO',funcao:'Pedreiro',obra:'Mikonos',diaria:89.45,salario:1789.00},
+  {id:8,nome:'JOILSON FERREIRA SALES',funcao:'Ajudante',obra:'Mikonos',diaria:89.45,salario:1789.00},
+  {id:9,nome:'JOSE DE RIBAMAR ROSA PALAVRA',funcao:'Servente',obra:'Mikonos',diaria:89.45,salario:1789.00},
+  {id:10,nome:'EURICO COSTA DUARTE',funcao:'Mestre de Obras',obra:'La Touche',diaria:105.73,salario:2114.60},
+  {id:11,nome:'JHON KEWIN OLIVEIRA DE ALMEIDA',funcao:'Pedreiro',obra:'La Touche',diaria:89.45,salario:1789.00},
+  {id:12,nome:'RYAN GLEYTON MARTINS FONSECA',funcao:'Pedreiro',obra:'La Touche',diaria:102.40,salario:2048.00},
+  {id:13,nome:'ANDRÉ GONÇALVES',funcao:'Servente',obra:'La Touche',diaria:89.45,salario:1789.00},
+  {id:14,nome:'UBIRATAN BRAGA ROCHA',funcao:'Encarregado',obra:'Bela Vista',diaria:105.73,salario:2114.60},
+  {id:15,nome:'JOANDERSON MENDES',funcao:'Pedreiro',obra:'Bela Vista',diaria:105.73,salario:2114.60},
+  {id:16,nome:'PAULO CESAR',funcao:'Servente',obra:'Bela Vista',diaria:89.45,salario:1789.00},
+  {id:17,nome:'DORILEIA PIEDADE RODRIGUES',funcao:'Ajudante',obra:'Ponta da Areia',diaria:81.05,salario:1621.00},
+  {id:18,nome:'RAUL DE JESUS COSTA',funcao:'Mestre de Obras',obra:'Ponta da Areia',diaria:150.00,salario:3000.00},
+  {id:19,nome:'VALDECI MELO MORAES',funcao:'Pedreiro',obra:'Ponta da Areia',diaria:89.45,salario:1789.00},
+  {id:20,nome:'CLAUDIO ALBERTO LIMA PINTO',funcao:'Encarregado',obra:'Ponta da Areia',diaria:175.00,salario:3500.00},
+  {id:21,nome:'VALCLETTON SILVA REIS',funcao:'Servente',obra:'Ponta da Areia',diaria:89.45,salario:1789.00},
+  {id:22,nome:'ADRIANO DOS REIS BONTONTUINTES',funcao:'Ajudante',obra:'Ponta da Areia',diaria:89.45,salario:1789.00},
+];
+let S={senha:'adm123',obras:[...OBRAS_P],funcs:[],registros:{},pagamentos:{},mes:new Date().getMonth(),ano:new Date().getFullYear(),obra:'Todas',aba:'ponto',confirmCb:null,editingId:null};
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
+function carregar(){S.senha=LS.get('z_senha','adm123');S.obras=LS.get('z_obras',[...OBRAS_P]);S.funcs=LS.get('z_funcs',[...FUNCS_P]);S.registros=LS.get('z_reg',{});S.pagamentos=LS.get('z_pag',{});}
+function salvar(){LS.set('z_obras',S.obras);LS.set('z_funcs',S.funcs);LS.set('z_reg',S.registros);LS.set('z_pag',S.pagamentos);}
+function salvarSenha(){LS.set('z_senha',S.senha);}
+const fmtBRL=v=>(+v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const chave=()=>`${S.ano}-${String(S.mes+1).padStart(2,'0')}`;
+function diasUteis(ano,mes){const tot=new Date(ano,mes+1,0).getDate(),r=[];for(let d=1;d<=tot;d++)if(new Date(ano,mes,d).getDay()!==0)r.push(d);return r;}
+function getSt(fid,dia){return S.registros[chave()]?.[fid]?.[dia]??'P';}
+function calcFunc(f){const dias=diasUteis(S.ano,S.mes);let fa=0,me=0,pr=0;dias.forEach(d=>{const s=getSt(f.id,d);if(s==='F')fa++;else if(s==='M')me++;else if(s==='O')pr++;});const dF=fa*f.diaria,dM=me*(f.diaria/2);return{total:dias.length,fa,me,pr,dF,dM,rec:Math.max(0,f.salario-dF-dM)};}
+function getPag(fid){return S.pagamentos[chave()]?.[fid]??{adiantamento:0,pago:0,status:'Pendente'};}
+function setPag(fid,dados){if(!S.pagamentos[chave()])S.pagamentos[chave()]={};S.pagamentos[chave()][fid]={...getPag(fid),...dados};salvar();}
+function filtrados(){return S.obra==='Todas'?S.funcs:S.funcs.filter(f=>f.obra===S.obra);}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2600);}
+function fazerLogin(){const v=document.getElementById('inputSenha').value,em=document.getElementById('inputEmail').value.trim().toLowerCase(),err=document.getElementById('loginError');if(em!=='zenoengenharia@gmail.com'){err.textContent='E-mail não autorizado.';err.style.display='block';return;}if(v!==S.senha){err.textContent='Senha incorreta.';err.style.display='block';return;}err.style.display='none';document.getElementById('loginScreen').classList.remove('active');document.getElementById('appScreen').classList.add('active');iniciarApp();}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').classList.contains('active'))fazerLogin();});
+function fazerLogout(){document.getElementById('appScreen').classList.remove('active');document.getElementById('loginScreen').classList.add('active');document.getElementById('inputSenha').value='';}
+function iniciarApp(){const sm=document.getElementById('selMes'),sa=document.getElementById('selAno');sm.innerHTML=MESES.map((m,i)=>`<option value="${i}" ${i===S.mes?'selected':''}>${m}</option>`).join('');sa.innerHTML=[2024,2025,2026,2027].map(a=>`<option ${a===S.ano?'selected':''}>${a}</option>`).join('');atualizarSelObra();render();summary();}
+function atualizarSelObra(){document.getElementById('selObra').innerHTML=`<option value="Todas">Todas as obras</option>`+S.obras.map(o=>`<option ${o===S.obra?'selected':''}>${o}</option>`).join('');}
+function mudarPeriodo(){S.mes=+document.getElementById('selMes').value;S.ano=+document.getElementById('selAno').value;render();summary();}
+function filtrarObra(){S.obra=document.getElementById('selObra').value;render();summary();}
+function mudarAba(aba,btn){S.aba=aba;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function summary(){const ff=filtrados(),faltas=ff.reduce((s,f)=>s+calcFunc(f).fa,0),total=ff.reduce((s,f)=>s+calcFunc(f).rec,0);document.getElementById('sumFunc').textContent=ff.length;document.getElementById('sumFaltas').textContent=faltas;document.getElementById('sumDias').textContent=diasUteis(S.ano,S.mes).length;document.getElementById('sumTotal').textContent=fmtBRL(total);}
+function render(){const m=document.getElementById('appMain');if(S.aba==='ponto')m.innerHTML=renderPonto();else if(S.aba==='folha')m.innerHTML=renderFolha();else if(S.aba==='pagamentos')m.innerHTML=renderPagamentos();else if(S.aba==='equipe')m.innerHTML=renderEquipe();else if(S.aba==='config')m.innerHTML=renderConfig();}
+function renderPonto(){const ff=filtrados(),dias=diasUteis(S.ano,S.mes),dn=['D','S','T','Q','Q','S','S'];const leg=`<div class="legend">${Object.entries(ST_LBL).map(([k,v])=>`<div class="legend-item"><div class="legend-dot ${ST_CLS[k]}">${v}</div>${k==='P'?'Presente':k==='F'?'Falta':k==='M'?'Meio':'Produção'}</div>`).join('')}<span style="font-size:9px;color:var(--muted);margin-left:auto">Toque para alterar</span></div>`;const thD=dias.map(d=>`<th style="min-width:26px;width:26px;text-align:center;padding:5px 2px">${d}<br><span style="opacity:.5;font-size:8px">${dn[new Date(S.ano,S.mes,d).getDay()]}</span></th>`).join('');const lns=ff.map(f=>{const c=calcFunc(f);const cells=dias.map(d=>{const s=getSt(f.id,d);return`<td style="padding:2px;text-align:center"><button class="cell-btn ${ST_CLS[s]}" onclick="cicloPonto(${f.id},${d})">${ST_LBL[s]}</button></td>`;}).join('');return`<tr><td class="s-col" title="${f.nome}">${f.nome}<br><span class="func-tag">${f.funcao}</span></td><td><span class="obra-tag">${f.obra.substring(0,5)}</span></td>${cells}<td style="text-align:center;font-weight:700;color:${c.fa>0?'var(--red)':'var(--green)'}">${c.fa}</td><td style="font-weight:700;color:var(--gold);white-space:nowrap;font-size:10px">${fmtBRL(c.rec)}</td></tr>`;}).join('');return`${leg}<div class="ponto-wrapper"><table class="ponto-table"><thead><tr><th class="s-col" style="min-width:140px">Funcionário</th><th style="min-width:55px">Obra</th>${thD}<th style="min-width:45px">Faltas</th><th style="min-width:80px">A Receber</th></tr></thead><tbody>${lns}</tbody></table></div>`;}
+function cicloPonto(fid,dia){const cur=getSt(fid,dia),next=ST_CICLO[(ST_CICLO.indexOf(cur)+1)%ST_CICLO.length];if(!S.registros[chave()])S.registros[chave()]={};if(!S.registros[chave()][fid])S.registros[chave()][fid]={};S.registros[chave()][fid][dia]=next;salvar();render();summary();}
+function renderFolha(){const obras=S.obra==='Todas'?S.obras:[S.obra];let html='';obras.forEach(obra=>{const ff=filtrados().filter(f=>f.obra===obra);if(!ff.length)return;const totObra=ff.reduce((s,f)=>s+calcFunc(f).rec,0);const lns=ff.map(f=>{const c=calcFunc(f),p=getPag(f.id),saldo=Math.max(0,c.rec-(p.adiantamento||0)-(p.pago||0));return`<tr><td style="font-weight:600">${f.nome}<br><span style="font-size:9px;color:var(--muted)">${f.funcao}</span></td><td>${fmtBRL(f.salario)}</td><td style="text-align:center">${c.total}</td><td style="text-align:center" class="${c.fa>0?'vr':'vg'}">${c.fa}</td><td class="vr">${c.dF>0?'-'+fmtBRL(c.dF):'—'}</td><td class="vgold">${fmtBRL(c.rec)}</td><td class="va">${p.adiantamento>0?fmtBRL(p.adiantamento):'—'}</td><td style="font-weight:700;color:${saldo<=0?'var(--green)':'var(--red)'}">${fmtBRL(saldo)}</td><td><span class="pag-badge ${PAG_CLS[p.status]}">${PAG_ICO[p.status]} ${p.status}</span></td></tr>`;}).join('');html+=`<div class="obra-section"><div class="obra-header"><span>🏗 ${obra}</span><span>${fmtBRL(totObra)}</span></div><div class="folha-scroll"><table class="folha-table"><thead><tr><th>Funcionário</th><th>Sal.Bruto</th><th>Dias</th><th>Faltas</th><th>Desconto</th><th>A Receber</th><th>Adiant.</th><th>Saldo</th><th>Status</th></tr></thead><tbody>${lns}</tbody></table></div></div>`;});const tot=filtrados().reduce((s,f)=>s+calcFunc(f).rec,0),totAd=filtrados().reduce((s,f)=>s+(getPag(f.id).adiantamento||0),0),totSd=filtrados().reduce((s,f)=>s+Math.max(0,calcFunc(f).rec-(getPag(f.id).adiantamento||0)-(getPag(f.id).pago||0)),0);html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px"><div class="mini-card navy"><div class="mc-label">Total a Pagar</div><div class="mc-val gold">${fmtBRL(tot)}</div></div><div class="mini-card"><div class="mc-label">Total Adiantado</div><div class="mc-val amber">${fmtBRL(totAd)}</div></div><div class="mini-card"><div class="mc-label">Saldo Restante</div><div class="mc-val red">${fmtBRL(totSd)}</div></div></div>`;return html;}
+function renderPagamentos(){const ff=filtrados(),obras=S.obra==='Todas'?S.obras:[S.obra];const pend=ff.filter(f=>getPag(f.id).status==='Pendente').length,parc=ff.filter(f=>getPag(f.id).status==='Parcial').length,pago=ff.filter(f=>getPag(f.id).status==='Pago').length;let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><h2 style="font-size:15px;font-weight:700;color:var(--navy)">Pagamentos — ${MESES[S.mes]} ${S.ano}</h2><button class="btn-sm gold" onclick="exportarRelatorioPDF()">📄 Relatório PDF</button></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px"><div class="mini-card" style="border-left:3px solid var(--red)"><div class="mc-label">🔴 Pendente</div><div class="mc-val" style="color:var(--red)">${pend}</div></div><div class="mini-card" style="border-left:3px solid var(--amber)"><div class="mc-label">🟡 Parcial</div><div class="mc-val" style="color:var(--amber)">${parc}</div></div><div class="mini-card" style="border-left:3px solid var(--green)"><div class="mc-label">🟢 Pago</div><div class="mc-val" style="color:var(--green)">${pago}</div></div></div>`;obras.forEach(obra=>{const funcs=ff.filter(f=>f.obra===obra);if(!funcs.length)return;const items=funcs.map(f=>{const c=calcFunc(f),p=getPag(f.id),saldo=Math.max(0,c.rec-(p.adiantamento||0)-(p.pago||0));return`<div class="pag-item"><div class="pag-info"><div class="pag-nome">${f.nome}</div><div class="pag-meta">${f.funcao} · A receber: <strong>${fmtBRL(c.rec)}</strong></div></div><div class="pag-cols"><div class="pag-col"><div class="pag-col-label">Adiantamento</div><input class="pag-input" type="number" value="${p.adiantamento||0}" min="0" step="10" onchange="atualizarPag(${f.id},'adiantamento',+this.value)"/></div><div class="pag-col"><div class="pag-col-label">Pago</div><input class="pag-input" type="number" value="${p.pago||0}" min="0" step="10" onchange="atualizarPag(${f.id},'pago',+this.value)"/></div><div class="pag-col"><div class="pag-col-label">Saldo</div><div class="pag-saldo ${saldo<=0?'saldo-ok':'saldo-pend'}">${fmtBRL(saldo)}</div></div><div class="pag-col"><div class="pag-col-label">Status</div><select class="pag-select ${PAG_CLS[p.status]}" onchange="atualizarPag(${f.id},'status',this.value)">${PAG_STATUS.map(s=>`<option value="${s}" ${s===p.status?'selected':''}>${PAG_ICO[s]} ${s}</option>`).join('')}</select></div></div></div>`;}).join('');const totO=funcs.reduce((s,f)=>s+calcFunc(f).rec,0),adO=funcs.reduce((s,f)=>s+(getPag(f.id).adiantamento||0),0),sdO=funcs.reduce((s,f)=>s+Math.max(0,calcFunc(f).rec-(getPag(f.id).adiantamento||0)-(getPag(f.id).pago||0)),0);html+=`<div class="obra-section" style="margin-bottom:16px"><div class="obra-header"><span>🏗 ${obra}</span><span style="font-size:10px;display:flex;gap:12px"><span>Total: ${fmtBRL(totO)}</span><span style="color:#fde68a">Adiant: ${fmtBRL(adO)}</span><span style="color:#fca5a5">Saldo: ${fmtBRL(sdO)}</span></span></div>${items}</div>`;});return html;}
+function atualizarPag(fid,campo,valor){const p=getPag(fid);p[campo]=valor;const f=S.funcs.find(x=>x.id===fid);if(f&&campo!=='status'){const c=calcFunc(f),tot=(p.adiantamento||0)+(p.pago||0);p.status=tot<=0?'Pendente':tot>=c.rec?'Pago':'Parcial';}setPag(fid,p);render();summary();}
+function renderEquipe(){const grupos=S.obras.map(obra=>{const ff=S.funcs.filter(f=>f.obra===obra);if(!ff.length)return'';const items=ff.map(f=>`<div class="func-item"><div class="func-avatar">${f.nome[0]}</div><div class="func-info"><div class="func-name">${f.nome}</div><div class="func-meta">${f.funcao} · ${f.obra} · Diária ${fmtBRL(f.diaria)}</div></div><div class="func-salary"><div class="gross">${fmtBRL(f.salario)}</div><div class="daily">bruto/mês</div></div><div class="func-actions"><button class="btn-sm navy" onclick="abrirEditarFunc(${f.id})">✏️</button><button class="btn-sm red" onclick="pedirRemocao(${f.id},'${f.nome.replace(/'/g,"\\'")}')">✕</button></div></div>`).join('');return`<div class="func-group"><div class="func-group-header">🏗 ${obra} — ${ff.length} func.</div>${items}</div>`;}).join('');return`<div class="equipe-top"><h2>Equipe (${S.funcs.length} func.)</h2><button class="btn-sm gold" onclick="abrirNovoFunc()">+ Adicionar</button></div>${grupos}`;}
+function renderConfig(){const oI=S.obras.map((o,i)=>`<div class="obra-item"><span>${o}</span><button class="btn-sm red" onclick="removerObra(${i})" style="padding:4px 8px;font-size:10px">✕</button></div>`).join('');return`<div class="config-section"><div class="config-title">🏗 Obras / Canteiros</div><div class="obra-list">${oI}</div><div class="add-obra-row"><input id="inputNovaObra" type="text" placeholder="Nome da nova obra"/><button class="btn-sm gold" onclick="adicionarObra()">+ Adicionar</button></div></div><div class="config-section"><div class="config-title">🔐 Alterar Senha</div><div class="senha-form"><input id="senhaAtual" type="password" placeholder="Senha atual"/><input id="senhaNova1" type="password" placeholder="Nova senha"/><input id="senhaNova2" type="password" placeholder="Confirmar nova senha"/><button class="btn-sm gold" onclick="alterarSenha()" style="align-self:flex-end">✓ Alterar</button></div></div><div class="config-section"><div class="config-title">ℹ️ Informações</div><div class="config-row"><label>Funcionários</label><span>${S.funcs.length}</span></div><div class="config-row"><label>Obras</label><span>${S.obras.length}</span></div><div class="config-row"><label>Dados</label><span>Salvos no dispositivo</span></div><div style="margin-top:14px"><button class="btn-sm red" onclick="pedirResetDados()">🗑 Resetar dados</button></div></div>`;}
+function exportarRelatorioPDF(){const obras=S.obra==='Todas'?S.obras:[S.obra],ff=filtrados();let body='';obras.forEach(obra=>{const funcs=ff.filter(f=>f.obra===obra);if(!funcs.length)return;const totR=funcs.reduce((s,f)=>s+calcFunc(f).rec,0),totA=funcs.reduce((s,f)=>s+(getPag(f.id).adiantamento||0),0),totS=funcs.reduce((s,f)=>s+Math.max(0,calcFunc(f).rec-(getPag(f.id).adiantamento||0)-(getPag(f.id).pago||0)),0),pg=funcs.filter(f=>getPag(f.id).status==='Pago').length,pa=funcs.filter(f=>getPag(f.id).status==='Parcial').length,pe=funcs.filter(f=>getPag(f.id).status==='Pendente').length;const lns=funcs.map(f=>{const c=calcFunc(f),p=getPag(f.id),sd=Math.max(0,c.rec-(p.adiantamento||0)-(p.pago||0)),sc=p.status==='Pago'?'#16a34a':p.status==='Parcial'?'#d97706':'#dc2626';return`<tr><td>${f.nome}<br><small>${f.funcao}</small></td><td>${c.total}</td><td style="color:${c.fa>0?'#dc2626':'#16a34a'}">${c.fa}</td><td>${fmtBRL(f.salario)}</td><td style="color:#dc2626">${c.dF>0?'-'+fmtBRL(c.dF):'—'}</td><td style="color:#D4A249;font-weight:700">${fmtBRL(c.rec)}</td><td style="color:#d97706">${p.adiantamento>0?fmtBRL(p.adiantamento):'—'}</td><td style="font-weight:700;color:${sd<=0?'#16a34a':'#dc2626'}">${fmtBRL(sd)}</td><td style="color:${sc};font-weight:700">${PAG_ICO[p.status]} ${p.status}</td></tr>`;}).join('');body+=`<div class="ob"><div class="oh">${obra}<span>🟢${pg} 🟡${pa} 🔴${pe}</span></div><table><thead><tr><th>Funcionário</th><th>Dias</th><th>Faltas</th><th>Sal.Bruto</th><th>Desconto</th><th>A Receber</th><th>Adiant.</th><th>Saldo</th><th>Status</th></tr></thead><tbody>${lns}</tbody></table><div class="or"><div><div class="ol">Total a Pagar</div><div class="ov gold">${fmtBRL(totR)}</div></div><div><div class="ol">Adiantado</div><div class="ov" style="color:#d97706">${fmtBRL(totA)}</div></div><div><div class="ol">Saldo</div><div class="ov" style="color:#dc2626">${fmtBRL(totS)}</div></div></div></div>`;});const tG=ff.reduce((s,f)=>s+calcFunc(f).rec,0),aG=ff.reduce((s,f)=>s+(getPag(f.id).adiantamento||0),0),sG=ff.reduce((s,f)=>s+Math.max(0,calcFunc(f).rec-(getPag(f.id).adiantamento||0)-(getPag(f.id).pago||0)),0),pgT=ff.filter(f=>getPag(f.id).status==='Pago').length,paT=ff.filter(f=>getPag(f.id).status==='Parcial').length,peT=ff.filter(f=>getPag(f.id).status==='Pendente').length;const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>ZENO Relatório ${MESES[S.mes]} ${S.ano}</title><style>body{font-family:Arial,sans-serif;font-size:8.5px;margin:14px;color:#0f172a}.hd{display:flex;justify-content:space-between;border-bottom:2px solid #D4A249;padding-bottom:10px;margin-bottom:12px}.lg{font-size:20px;font-weight:900;color:#060642;letter-spacing:3px}.lg small{display:block;font-size:7px;color:#888}.sb{display:flex;gap:8px;background:#f0f2f8;border-radius:6px;padding:8px;margin-bottom:12px;justify-content:space-around}.si{text-align:center}.sl{font-size:7px;color:#888;font-weight:600;text-transform:uppercase}.sv{font-size:13px;font-weight:900;margin-top:2px}.ob{margin-bottom:14px;break-inside:avoid}.oh{background:#1C245C;color:#D4A249;padding:5px 8px;font-weight:700;font-size:9px;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse}th{background:#f0f2f8;color:#1C245C;padding:4px 5px;text-align:left;font-size:7.5px;font-weight:700}td{padding:4px 5px;border-bottom:1px solid #e2e8f0;font-size:7.5px}td small{color:#888;display:block}tr:nth-child(even) td{background:#f9fafb}.or{display:flex;background:#f0f2f8;border:1px solid #e2e8f0;border-top:none}.or div{flex:1;padding:5px 8px;border-right:1px solid #e2e8f0;text-align:center}.or div:last-child{border-right:none}.ol{font-size:7px;color:#888;font-weight:600;text-transform:uppercase}.ov{font-size:10px;font-weight:700;margin-top:1px}.ov.gold{color:#D4A249}.tf{background:#060642;color:#fff;padding:10px;display:flex;justify-content:space-around;margin-top:10px;border-radius:4px}.ti{text-align:center}.tl{font-size:7px;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase}.tv{font-size:13px;font-weight:900;margin-top:2px}@media print{@page{margin:10mm}}</style></head><body><div class="hd"><div><div class="lg">ZENO<small>Construtora e Engenharia LTDA</small></div></div><div style="text-align:center"><div style="font-size:13px;font-weight:700;color:#060642">Relatório de Pagamentos</div><div style="font-size:8px;color:#888">${MESES[S.mes]} / ${S.ano}${S.obra!=='Todas'?' · '+S.obra:''}</div></div><div style="text-align:right;font-size:7.5px;color:#888">Emitido: ${new Date().toLocaleDateString('pt-BR')}<br>${ff.length} funcionários</div></div><div class="sb"><div class="si"><div class="sl">🔴 Pendente</div><div class="sv" style="color:#dc2626">${peT}</div></div><div class="si"><div class="sl">🟡 Parcial</div><div class="sv" style="color:#d97706">${paT}</div></div><div class="si"><div class="sl">🟢 Pago</div><div class="sv" style="color:#16a34a">${pgT}</div></div><div class="si"><div class="sl">Total a Pagar</div><div class="sv" style="color:#D4A249">${fmtBRL(tG)}</div></div><div class="si"><div class="sl">Adiantado</div><div class="sv" style="color:#d97706">${fmtBRL(aG)}</div></div><div class="si"><div class="sl">Saldo</div><div class="sv" style="color:#dc2626">${fmtBRL(sG)}</div></div></div>${body}<div class="tf"><div class="ti"><div class="tl">Total a Pagar</div><div class="tv" style="color:#D4A249">${fmtBRL(tG)}</div></div><div class="ti"><div class="tl">Adiantado</div><div class="tv" style="color:#fde68a">${fmtBRL(aG)}</div></div><div class="ti"><div class="tl">Saldo</div><div class="tv" style="color:#fca5a5">${fmtBRL(sG)}</div></div><div class="ti"><div class="tl">Pagos</div><div class="tv" style="color:#86efac">${pgT}/${ff.length}</div></div></div><script>window.onload=()=>window.print()<\/script></body></html>`;const w=window.open('','_blank');w.document.write(html);w.document.close();toast('📄 Relatório gerado!');}
+function exportarCSV(){const ff=filtrados(),rows=[['Funcionário','Função','Obra','Sal.Bruto','Dias','Faltas','A Receber','Adiantamento','Pago','Saldo','Status']];ff.forEach(f=>{const c=calcFunc(f),p=getPag(f.id),sd=Math.max(0,c.rec-(p.adiantamento||0)-(p.pago||0));rows.push([f.nome,f.funcao,f.obra,f.salario.toFixed(2),c.total,c.fa,c.rec.toFixed(2),(p.adiantamento||0).toFixed(2),(p.pago||0).toFixed(2),sd.toFixed(2),p.status]);});const csv=rows.map(r=>r.join(';')).join('\n'),blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`ZENO_Folha_${MESES[S.mes]}_${S.ano}.csv`;a.click();URL.revokeObjectURL(url);toast('📊 Planilha exportada!');}
+function exportarPDF(){exportarRelatorioPDF();}
+function adicionarObra(){const val=document.getElementById('inputNovaObra')?.value.trim();if(!val){toast('⚠️ Digite o nome!');return;}if(S.obras.includes(val)){toast('⚠️ Já existe!');return;}S.obras.push(val);salvar();atualizarSelObra();render();toast('✅ Obra adicionada!');}
+function removerObra(i){if(S.funcs.some(f=>f.obra===S.obras[i])){toast('⚠️ Existem funcionários nessa obra!');return;}S.obras.splice(i,1);salvar();atualizarSelObra();render();toast('🗑 Obra removida.');}
+function alterarSenha(){const at=document.getElementById('senhaAtual')?.value,n1=document.getElementById('senhaNova1')?.value,n2=document.getElementById('senhaNova2')?.value;if(at!==S.senha){toast('❌ Senha atual incorreta!');return;}if(!n1||n1.length<4){toast('⚠️ Senha muito curta!');return;}if(n1!==n2){toast('❌ Senhas não conferem!');return;}S.senha=n1;salvarSenha();toast('✅ Senha alterada!');render();}
+function pedirResetDados(){document.getElementById('confirmMsg').innerHTML='⚠️ <strong>Apaga TODOS os dados.</strong> Tem certeza?';S.confirmCb=resetarTudo;document.getElementById('modalConfirm').style.display='flex';}
+function resetarTudo(){S.obras=[...OBRAS_P];S.funcs=[...FUNCS_P];S.registros={};S.pagamentos={};salvar();atualizarSelObra();render();summary();toast('✅ Dados resetados.');}
+function abrirNovoFunc(){S.editingId=null;document.getElementById('modalFuncTitle').textContent='Novo Funcionário';['editNome','editDiaria','editSalario'].forEach(id=>document.getElementById(id).value='');preencherObraSelect();document.getElementById('editFuncao').value='Pedreiro';document.getElementById('modalFunc').style.display='flex';}
+function abrirEditarFunc(id){const f=S.funcs.find(x=>x.id===id);if(!f)return;S.editingId=id;document.getElementById('modalFuncTitle').textContent='Editar Funcionário';document.getElementById('editNome').value=f.nome;document.getElementById('editDiaria').value=f.diaria;document.getElementById('editSalario').value=f.salario;preencherObraSelect(f.obra);document.getElementById('editFuncao').value=f.funcao;document.getElementById('modalFunc').style.display='flex';}
+function preencherObraSelect(sel){document.getElementById('editObra').innerHTML=S.obras.map(o=>`<option ${o===sel?'selected':''}>${o}</option>`).join('');}
+function fecharModalFunc(){document.getElementById('modalFunc').style.display='none';S.editingId=null;}
+function salvarFuncionario(){const nome=document.getElementById('editNome').value.trim().toUpperCase(),funcao=document.getElementById('editFuncao').value,obra=document.getElementById('editObra').value,diaria=parseFloat(document.getElementById('editDiaria').value),salario=parseFloat(document.getElementById('editSalario').value);if(!nome||!funcao||!obra||isNaN(diaria)||isNaN(salario)){toast('⚠️ Preencha tudo!');return;}if(S.editingId!==null){const idx=S.funcs.findIndex(f=>f.id===S.editingId);if(idx>=0)S.funcs[idx]={...S.funcs[idx],nome,funcao,obra,diaria,salario};toast('✅ Atualizado!');}else{S.funcs.push({id:Date.now(),nome,funcao,obra,diaria,salario});toast('✅ Adicionado!');}fecharModalFunc();salvar();atualizarSelObra();render();summary();}
+function pedirRemocao(id,nome){document.getElementById('confirmMsg').innerHTML=`Remover <strong>${nome}</strong>?`;S.confirmCb=()=>removerFuncionario(id);document.getElementById('modalConfirm').style.display='flex';}
+function confirmarAcao(){fecharConfirm();if(S.confirmCb){S.confirmCb();S.confirmCb=null;}}
+function fecharConfirm(){document.getElementById('modalConfirm').style.display='none';}
+function removerFuncionario(id){S.funcs=S.funcs.filter(f=>f.id!==id);salvar();render();summary();toast('🗑 Removido.');}
+window.addEventListener('load',()=>{carregar();});
+</script>
+</body>
+</html>
